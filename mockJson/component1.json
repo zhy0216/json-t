@@ -1,0 +1,9 @@
+{
+    "name": "component1",
+    "body": {
+        "name": "body1",
+        "deepProp": {
+            "veryDeep": "here"
+        }
+    }
+}

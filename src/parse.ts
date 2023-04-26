@@ -11,7 +11,7 @@ const isObject = (data: any): data is JSONObject =>
 
 const parse = (data: JSONValue, context: ParseContext): JSONValue => {
   if (Array.isArray(data)) {
-    return data.map((v) => parse(data, context));
+    return data.map((v) => parse(v, context));
   } else if (isObject(data)) {
     return parseObject(data, context);
   } else {
