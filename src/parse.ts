@@ -4,12 +4,12 @@ interface JSONObject {
   [x: string]: JSONValue;
 }
 
-type ParseContext = Record<string, JSONValue | undefined>;
+export type ParseContext = Record<string, JSONValue | undefined>;
 
 const isObject = (data: any): data is JSONObject =>
   data !== null && typeof data === "object";
 
-const parse = (data: JSONValue, context: ParseContext): JSONValue => {
+export const parse = (data: JSONValue, context: ParseContext): JSONValue => {
   if (Array.isArray(data)) {
     return data.map((v) => parse(v, context));
   } else if (isObject(data)) {
@@ -23,6 +23,7 @@ const parseObject = (data: JSONObject, context: ParseContext): JSONObject => {
   const { $extend, ...rest } = data;
 
   // jmespath here
+  // extend can be an array?
   const extendedJson =
     typeof $extend === "string" ? context[$extend] : undefined;
   if (!isObject(extendedJson)) {

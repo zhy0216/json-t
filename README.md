@@ -5,9 +5,8 @@ to use json-template reduce the unnecessary repetition. i extend json language w
 
 ## $extend
 
-## pipe with jmespath
+## pipe with [jmespath](https://jmespath.org/)
 
-
-
-
+## extra
+* recommend use .jsont as suffix file name
 * https://jmespath.org/
