@@ -16,4 +16,19 @@ describe("test $extend", () => {
 
     expect(component1Json).toEqual(parsedJson);
   });
+
+  it("can override value", () => {
+    expect(component1Json.name).toBe("component1");
+    const extendJsonT = {
+      $extend: "component1.json",
+      name: "here",
+    };
+
+    const { name, ...parsedJson } = parse(extendJsonT, {
+      "component1.json": component1Json,
+    }) as any;
+
+    expect(parsedJson.body).toEqual(component1Json.body);
+    expect(name).toEqual("here");
+  });
 });
