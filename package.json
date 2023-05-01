@@ -1,5 +1,5 @@
 {
-  "name": "typescript-jest-example",
+  "name": "json-t",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,8 +8,7 @@
     "test": "jest"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bromix/typescript-jest-example.git"
+    "url": "https://github.com/zhy0216/json-t"
   },
   "keywords": [],
   "author": "",
