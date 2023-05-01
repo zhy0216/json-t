@@ -2,7 +2,7 @@ import { readJson } from "../src/utils";
 import { resolve } from "path";
 import { parse } from "../src";
 
-const component1Json = readJson(resolve("./mockJson/component1.json"));
+const component1Json = readJson(resolve("./mockJson/component1-t.json"));
 describe("test $extend", () => {
   it("should $extend all value", () => {
     expect(component1Json.name).toBe("component1");

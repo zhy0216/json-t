@@ -1,4 +1,4 @@
-# json-t (json-t)
+# json-t (json-template)
 
 WIP...
 
