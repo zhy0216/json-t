@@ -73,7 +73,7 @@ export const parseFileRelativePath = (data: JSONValue, dir: string): any => {
       (prev, curr) =>
         curr === "$extend"
           ? { ...prev, $extend: resolve(dir, data[curr] as string) }
-          : { ...prev, [curr]: data[curr] },
+          : { ...prev, [curr]: parseFileRelativePath(data[curr], dir) },
       {}
     );
   } else {
