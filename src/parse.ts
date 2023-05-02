@@ -51,6 +51,26 @@ export const parseFile = <T>(
 ): T => {
   const filePath = resolve(dir, fileName);
   const data = readJson(filePath);
+  const resolvedRelativeFile = parseFileRelativePath(data, dir);
 
-  return parse(data, { ...context, [filePath]: data }) as T;
+  return parse(resolvedRelativeFile, {
+    ...context,
+    [filePath]: data,
+  }) as T;
+};
+
+export const parseFileRelativePath = (data: JSONValue, dir: string): any => {
+  if (Array.isArray(data)) {
+    return data.map((v) => parseFileRelativePath(v, dir));
+  } else if (isObject(data)) {
+    return Object.keys(data).reduce(
+      (prev, curr) =>
+        curr === "$extend"
+          ? { ...prev, $extend: resolve(dir, data[curr] as string) }
+          : { ...prev, [curr]: data[curr] },
+      {}
+    );
+  } else {
+    return data;
+  }
 };

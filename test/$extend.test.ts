@@ -1,6 +1,6 @@
 import { readJson } from "../src/utils";
 import { resolve } from "path";
-import { parse } from "../src";
+import { parse, parseFile } from "../src";
 
 const component1Json = readJson(resolve("./mockJson/component1-t.json"));
 describe("test $extend", () => {
@@ -30,5 +30,10 @@ describe("test $extend", () => {
 
     expect(parsedJson.body).toEqual(component1Json.body);
     expect(name).toEqual("here");
+  });
+
+  it("parseFile", () => {
+    const parsedJson = parseFile("component2-t.json", "./mockJson/", {});
+    expect(component1Json).toEqual(parsedJson);
   });
 });
