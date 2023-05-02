@@ -1,0 +1,8 @@
+{
+    "$extend": "./component1-t.json",
+    "name": "here",
+    "body": {
+        "$extend":"./component1-t.json | body",
+        "name": "changed"
+    }
+}

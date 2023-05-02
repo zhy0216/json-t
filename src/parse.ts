@@ -1,7 +1,8 @@
-import { isObject, readJson } from "./utils";
+import { extraJmesPath, isObject, readJson } from "./utils";
 import { JSONObject, JSONValue, ParseContext } from "./types";
 import * as path from "path";
 import { resolve } from "path";
+import * as jmespath from "jmespath";
 
 export const parse = (data: JSONValue, context: ParseContext): JSONValue => {
   if (Array.isArray(data)) {
@@ -27,8 +28,13 @@ const parseObject = (data: JSONObject, context: ParseContext): JSONObject => {
     if (context[$extend]) {
       extendedJson = context[$extend];
     } else {
-      const pathData = path.parse(resolve($extend));
+      const jmespathExp = extraJmesPath(resolve($extend));
+
+      const pathData = path.parse(jmespathExp.path);
       extendedJson = parseFile(pathData.base, pathData.dir, context);
+      if (jmespathExp.pipeExp) {
+        extendedJson = jmespath.search(extendedJson, jmespathExp.pipeExp);
+      }
     }
   }
 

@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/jest': ^29.2.5
+  '@types/jmespath': ^0.15.0
   '@types/node': ^18.16.1
   jest: ^29.3.1
   jmespath: ^0.16.0
@@ -11,6 +12,7 @@ specifiers:
 
 dependencies:
   '@types/jest': 29.2.5
+  '@types/jmespath': 0.15.0
   '@types/node': 18.16.1
   jest: 29.3.1_@types+node@18.16.1
   jmespath: 0.16.0
@@ -699,6 +701,10 @@ packages:
     dependencies:
       expect: 29.3.1
       pretty-format: 29.3.1
+    dev: false
+
+  /@types/jmespath/0.15.0:
+    resolution: {integrity: sha512-uaht4XcYSq5ZrPriQW8C+g5DhptewRd1E84ph7L167sCyzLObz+U3JTpmYq/CNkvjNsz2mtyQoHPNEYQYTzWmg==}
     dev: false
 
   /@types/node/18.16.1:
