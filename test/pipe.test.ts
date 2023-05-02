@@ -1,8 +1,12 @@
-import { readJson } from "../src/utils";
-import { resolve } from "path";
-import { parse, parseFile } from "../src";
+import { parseFile } from "../src";
 
-const component1Json = readJson(resolve("./mockJson/component1-t.json"));
 describe("test pip", () => {
-  it("should pick name", () => {});
+  it("should pick name", () => {
+    const parsedJson = parseFile("component3-t.json", "./mockJson/", {});
+    expect(parsedJson).toEqual({
+      deepProp: {
+        veryDeep: "here",
+      },
+    });
+  });
 });
