@@ -1,6 +1,4 @@
-# json-t (json-template)
-
-WIP...
+# json-t (json template)
 
 in some cases, we will write a lot of json files. They may have lots of similar part, so i come up an idea
 to use json-t reduce the unnecessary repetition. i extend json language with two simple concepts.
@@ -20,6 +18,10 @@ see more example [here](https://github.com/zhy0216/json-t/blob/master/test/%24ex
 
 
 ## pipe with [jmespath](https://jmespath.org/)
+JMESPath is a query language for JSON.
+It is integrated in `$extend`. Use `|` after the file path to manipulate json.
+
+see more example [here](https://github.com/zhy0216/json-t/blob/master/test/pipe.test.ts)
 
 ## json-t is simple
 * json-t is written in json
