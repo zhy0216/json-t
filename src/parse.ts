@@ -1,13 +1,8 @@
-type JSONValue = string | number | boolean | null | JSONObject | JSONValue[];
-
-interface JSONObject {
-  [x: string]: JSONValue;
-}
-
-export type ParseContext = Record<string, JSONValue | undefined>;
-
-const isObject = (data: any): data is JSONObject =>
-  data !== null && typeof data === "object";
+import { isObject } from "./utils";
+import { JSONObject, JSONValue, ParseContext } from "./types";
+import * as path from "path";
+import { parseFile } from "./parseFile";
+import { resolve } from "path";
 
 export const parse = (data: JSONValue, context: ParseContext): JSONValue => {
   if (Array.isArray(data)) {
@@ -24,8 +19,16 @@ const parseObject = (data: JSONObject, context: ParseContext): JSONObject => {
 
   // jmespath here
   // extend can be an array?
-  const extendedJson =
-    typeof $extend === "string" ? context[$extend] : undefined;
+  let extendedJson: JSONValue | undefined = undefined;
+  if ($extend && $extend === "string") {
+    if (context[$extend]) {
+      extendedJson = context[$extend];
+    } else {
+      const pathData = path.parse(resolve($extend));
+      extendedJson = parseFile(pathData.base, pathData.dir, context);
+    }
+  }
+
   if (!isObject(extendedJson)) {
     throw new Error(`wrong with extend: ${$extend}`);
   }

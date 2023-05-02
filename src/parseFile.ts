@@ -1,6 +1,7 @@
-import { type ParseContext } from "./parse";
-import { resolve, parse } from "path";
-import { readJson } from "./utils";
+import { type ParseContext } from "./types";
+import { resolve } from "path";
+import { isObject, readJson } from "./utils";
+import { parse } from "./parse";
 
 export const parseFile = <T>(
   fileName: string,
@@ -8,7 +9,7 @@ export const parseFile = <T>(
   context: ParseContext
 ): T => {
   const filePath = resolve(dir, fileName);
-  const json = readJson(filePath);
-  // todo
-  return json;
+  const data = readJson(filePath);
+
+  return parse(data, { ...context, [filePath]: data }) as T;
 };
