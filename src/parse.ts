@@ -1,7 +1,6 @@
-import { isObject } from "./utils";
+import { isObject, readJson } from "./utils";
 import { JSONObject, JSONValue, ParseContext } from "./types";
 import * as path from "path";
-import { parseFile } from "./parseFile";
 import { resolve } from "path";
 
 export const parse = (data: JSONValue, context: ParseContext): JSONValue => {
@@ -17,10 +16,14 @@ export const parse = (data: JSONValue, context: ParseContext): JSONValue => {
 const parseObject = (data: JSONObject, context: ParseContext): JSONObject => {
   const { $extend, ...rest } = data;
 
+  if (!$extend) {
+    return data;
+  }
+
   // jmespath here
   // extend can be an array?
   let extendedJson: JSONValue | undefined = undefined;
-  if ($extend && $extend === "string") {
+  if ($extend && typeof $extend === "string") {
     if (context[$extend]) {
       extendedJson = context[$extend];
     } else {
@@ -39,4 +42,15 @@ const parseObject = (data: JSONObject, context: ParseContext): JSONObject => {
   );
 
   return { ...extendedJson, ...parsedJson };
+};
+
+export const parseFile = <T>(
+  fileName: string,
+  dir: string,
+  context: ParseContext
+): T => {
+  const filePath = resolve(dir, fileName);
+  const data = readJson(filePath);
+
+  return parse(data, { ...context, [filePath]: data }) as T;
 };
