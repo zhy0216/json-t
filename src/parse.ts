@@ -1,10 +1,16 @@
 import { extraJmesPath, isObject, readJson } from "./utils";
 import { JSONObject, JSONValue, ParseContext } from "./types";
-import * as path from "path";
 import { resolve } from "path";
-import * as jmespath from "jmespath";
+import {
+  FileResolver,
+  JsonTVisitor,
+  RelativeFilePathResolver,
+  visit,
+} from "./visitor";
 
-export const parse = (data: JSONValue, context: ParseContext) => {};
+export const parse = (data: JSONValue, context: ParseContext) => {
+  return visit([new JsonTVisitor(context)], data);
+};
 
 export const parseFile = <T>(
   fileName: string,
@@ -13,26 +19,12 @@ export const parseFile = <T>(
 ): T => {
   const filePath = resolve(dir, fileName);
   const data = readJson(filePath);
-  const resolvedRelativeFile = parseFileRelativePath(data, dir);
-
-  return parse(resolvedRelativeFile, {
-    ...context,
-    [filePath]: data,
-  }) as T;
-};
-
-export const parseFileRelativePath = (data: JSONValue, dir: string): any => {
-  if (Array.isArray(data)) {
-    return data.map((v) => parseFileRelativePath(v, dir));
-  } else if (isObject(data)) {
-    return Object.keys(data).reduce(
-      (prev, curr) =>
-        curr === "$extend"
-          ? { ...prev, $extend: resolve(dir, data[curr] as string) }
-          : { ...prev, [curr]: parseFileRelativePath(data[curr], dir) },
-      {}
-    );
-  } else {
-    return data;
-  }
+  return visit(
+    [
+      new RelativeFilePathResolver(dir, context),
+      new FileResolver(fileName, dir, context),
+      new JsonTVisitor(context),
+    ],
+    data
+  ) as T;
 };

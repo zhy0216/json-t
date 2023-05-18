@@ -1,5 +1,5 @@
 import { JSONObject, JSONValue, ParseContext } from "./types";
-import { extraJmesPath, isObject } from "./utils";
+import { extraJmesPath, isObject, readJson } from "./utils";
 import { resolve } from "path";
 import path from "path";
 import * as jmespath from "jmespath";
@@ -70,10 +70,32 @@ export class JsonTVisitor implements IJsonTVisitor {
   }
 }
 
-export class RelativeFileResolver extends JsonTVisitor {
+export class FileResolver extends JsonTVisitor {
   context: ParseContext;
   dir: string;
-  constructor(context: ParseContext, dir: string) {
+  fileName: string;
+  constructor(fileName: string, dir: string, context: ParseContext) {
+    super(context);
+    this.context = context;
+    this.dir = dir;
+    this.fileName = fileName;
+  }
+  parse$extend(extendedJson: JSONValue | undefined): JSONValue | undefined {
+    if (typeof extendedJson === "string") {
+      const filePath = resolve(this.dir, this.fileName);
+      const data = readJson(filePath);
+      this.context[filePath] = data;
+      return data;
+    }
+
+    return extendedJson;
+  }
+}
+
+export class RelativeFilePathResolver extends JsonTVisitor {
+  context: ParseContext;
+  dir: string;
+  constructor(dir: string, context: ParseContext) {
     super(context);
     this.context = context;
     this.dir = dir;
@@ -83,6 +105,17 @@ export class RelativeFileResolver extends JsonTVisitor {
       return resolve(this.dir, extendedJson as string);
     }
 
-    return extendedJson as JSONValue;
+    return extendedJson;
   }
 }
+
+export const visit = (
+  visitors: IJsonTVisitor[],
+  data: JSONValue
+): JSONValue => {
+  for (const visitor of visitors) {
+    data = visitor.parse(data);
+  }
+
+  return data;
+};
