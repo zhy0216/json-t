@@ -36,4 +36,9 @@ describe("test $extend", () => {
     const parsedJson = parseFile("component2-t.json", "./mockJson/", {});
     expect(component1Json).toEqual(parsedJson);
   });
+
+  it("should $extend deep", () => {
+    const parsedJson = parseFile("component5-t.json", "./mockJson/", {});
+    expect(component1Json).toEqual(parsedJson);
+  });
 });

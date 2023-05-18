@@ -1,5 +1,5 @@
-import { extraJmesPath, isObject, readJson } from "./utils";
-import { JSONObject, JSONValue, ParseContext } from "./types";
+import { readJson } from "./utils";
+import { JSONValue, ParseContext } from "./types";
 import { resolve } from "path";
 import {
   FileResolver,
@@ -19,6 +19,7 @@ export const parseFile = <T>(
 ): T => {
   const filePath = resolve(dir, fileName);
   const data = readJson(filePath);
+
   return visit(
     [
       new RelativeFilePathResolver(dir, context),

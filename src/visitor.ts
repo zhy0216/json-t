@@ -3,6 +3,7 @@ import { extraJmesPath, isObject, readJson } from "./utils";
 import { resolve } from "path";
 import path from "path";
 import * as jmespath from "jmespath";
+import { parseFile } from "./parse";
 
 export interface IJsonTVisitor {
   parse(data: JSONValue): JSONValue;
@@ -73,7 +74,11 @@ export class FileResolver extends JsonTVisitor {
       const jmespathExp = extraJmesPath(resolve(extendedJson));
       const pathData = path.parse(jmespathExp.path);
       const filePath = resolve(pathData.dir, pathData.base);
-      let data = readJson(filePath);
+      let data = parseFile<JSONValue>(
+        pathData.base,
+        pathData.dir,
+        this.context
+      );
       if (jmespathExp.pipeExp) {
         data = jmespath.search(data, jmespathExp.pipeExp);
       }
