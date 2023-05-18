@@ -38,34 +38,15 @@ export class JsonTVisitor implements IJsonTVisitor {
       {}
     );
 
+    console.log("####### JsonTVisitor:", { ...extendedJson, ...parsedJson });
+
     return { ...extendedJson, ...parsedJson };
   }
 
   parse$extend(extendedJson: JSONValue | undefined): JSONValue | undefined {
-    // jmespath here
-    // extend can be an array?
-    // if ($extend && typeof $extend === "string") {
-    //   if (this.context[$extend]) {
-    //     extendedJson = this.context[$extend];
-    //   } else {
-
-    if (!extendedJson) {
-      return undefined;
+    if (typeof extendedJson === "string" && this.context[extendedJson]) {
+      extendedJson = this.context[extendedJson];
     }
-
-    // const jmespathExp = extraJmesPath(resolve($extend));
-    //
-    // const pathData = path.parse(jmespathExp.path);
-    // extendedJson = parseFile(pathData.base, pathData.dir, this.context);
-    // if (jmespathExp.pipeExp) {
-    //   extendedJson = jmespath.search(extendedJson, jmespathExp.pipeExp);
-    // }
-    // }
-
-    if (!isObject(extendedJson)) {
-      throw new Error(`wrong with extend: ${extendedJson}`);
-    }
-
     return extendedJson;
   }
 }
@@ -73,17 +54,40 @@ export class JsonTVisitor implements IJsonTVisitor {
 export class FileResolver extends JsonTVisitor {
   context: ParseContext;
   dir: string;
-  fileName: string;
   constructor(fileName: string, dir: string, context: ParseContext) {
     super(context);
     this.context = context;
     this.dir = dir;
     this.fileName = fileName;
   }
+
+  parseObject(data: JSONObject): JSONObject {
+    const { $extend, ...rest } = data;
+    const extendedJson = this.parse$extend($extend) as JSONObject;
+    console.log("######## FileResolver parseObject:", extendedJson);
+    const parsedJson = Object.keys(rest).reduce(
+      (prev, curr) => ({ ...prev, [curr]: this.parse(rest[curr]) }),
+      {}
+    );
+
+    return { $extend: extendedJson, ...parsedJson };
+  }
   parse$extend(extendedJson: JSONValue | undefined): JSONValue | undefined {
+    console.log("##### FileResolver extendedJson:", extendedJson);
     if (typeof extendedJson === "string") {
+      const jmespathExp = extraJmesPath(resolve(extendedJson));
+      const pathData = path.parse(jmespathExp.path);
       const filePath = resolve(this.dir, this.fileName);
-      const data = readJson(filePath);
+      let data = readJson(filePath);
+      console.log(
+        "########## filePath, data, jmespathExp.pipeExp:",
+        filePath,
+        data,
+        jmespathExp.pipeExp
+      );
+      if (jmespathExp.pipeExp) {
+        data = jmespath.search(data, jmespathExp.pipeExp);
+      }
       this.context[filePath] = data;
       return data;
     }
@@ -100,7 +104,24 @@ export class RelativeFilePathResolver extends JsonTVisitor {
     this.context = context;
     this.dir = dir;
   }
+
+  parseObject(data: JSONObject): JSONObject {
+    const { $extend, ...rest } = data;
+    const extendedJson = this.parse$extend($extend) as string;
+    const parsedJson = Object.keys(rest).reduce(
+      (prev, curr) => ({ ...prev, [curr]: this.parse(rest[curr]) }),
+      {}
+    );
+
+    return { $extend: extendedJson, ...parsedJson };
+  }
   parse$extend(extendedJson: JSONValue | undefined): JSONValue | undefined {
+    console.log(
+      "##### RelativeFilePathResolver this.dir, extendedJson:",
+      this.dir,
+      extendedJson,
+      resolve(this.dir, extendedJson as string)
+    );
     if (typeof extendedJson === "string") {
       return resolve(this.dir, extendedJson as string);
     }
