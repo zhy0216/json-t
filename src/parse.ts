@@ -22,7 +22,7 @@ export const parseFile = <T>(
   return visit(
     [
       new RelativeFilePathResolver(dir, context),
-      new FileResolver(fileName, dir, context),
+      new FileResolver(dir, context),
       new JsonTVisitor(context),
     ],
     data
