@@ -26,9 +26,9 @@ see more example [here](https://github.com/zhy0216/json-t/blob/master/test/pipe.
 ## json-t is simple
 * json-t is written in json
 * json-t only add two new concepts
-* you can use your json editor to edit your template files
+* you can use your own json editor to edit your template files
 
 
 ## extra
-* we recommend still using .json as suffix file name (get json highlight), but appending `-t` to the original filename.
+* recommend keeping .json as suffix file name (get json highlight), but appending `-t` to the original filename.
 * learn about https://jmespath.org/
